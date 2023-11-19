@@ -1,0 +1,94 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+
+
+
+
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract MyToken is ERC20, Ownable {
+    uint256 private maxTxAmount;
+    uint256 private maxWalletSize;
+    uint256 private minSwapTokensThreshold;
+
+    mapping(address => bool) private isExcludedFromFees;
+
+    event MaxTxAmountUpdated(uint256 newAmount);
+    event FeeUpdated(uint256 taxFee, uint256 liquidityFee, uint256 marketingFee, uint256 charityFee);
+    event WalletSizeUpdated(uint256 newSize);
+    event MinSwapTokensThresholdUpdated(uint256 newThreshold);
+
+    constructor(
+        string memory name,
+        string memory symbol,
+        uint256 initialSupply,
+        address initialOwner // Add initial owner parameter
+    ) ERC20(name, symbol) Ownable(initialOwner) {
+        _mint(initialOwner, initialSupply);
+        maxTxAmount = totalSupply() / 100; // Example: 1% of total supply
+        maxWalletSize = totalSupply() / 50; // Example: 2% of total supply
+        minSwapTokensThreshold = totalSupply() / 200; // Example: 0.5% of total supply
+    }
+
+    // ... (rest of the contract remains the same)
+
+
+    
+    function _maxTxAmount() internal view returns (uint256) {
+        return maxTxAmount;
+    }
+
+   function setFee(
+    uint256 taxFee,
+    uint256 liquidityFee,
+    uint256 marketingFee, // Remove the trailing comma
+    uint256 charityFee
+)    
+ external onlyOwner {
+    // Implement logic to set fees
+    emit FeeUpdated(taxFee, liquidityFee, marketingFee, charityFee);
+}
+    function excludeMultipleAccountsFromFees(address account, bool isExcluded) external onlyOwner {
+        isExcludedFromFees[account] = isExcluded;
+    }
+
+      function allowance(address owner, address spender) public view override returns (uint256) {
+        return super.allowance(owner, spender);
+    }
+
+
+    function setMaxWalletSize(uint256 newSize) external onlyOwner {
+        maxWalletSize = newSize;
+        emit WalletSizeUpdated(newSize);
+    }
+
+      function transfer(address to, uint256 amount) public override returns (bool) {
+        return super.transfer(to, amount);
+    }
+
+    function manualswap() external onlyOwner {
+        // Implement manual swap logic
+        // ...
+    }
+
+    function _maxWalletSize() internal view returns (uint256) {
+        return maxWalletSize;
+    }
+
+    function setMinSwapTokensThreshold(uint256 newThreshold) external onlyOwner {
+        minSwapTokensThreshold = newThreshold;
+        emit MinSwapTokensThresholdUpdated(newThreshold);
+    }
+
+    function manualsend() external onlyOwner {
+        // Implement manual send logic
+        // ...
+    }
+
+    function setMaxTxnAmount(uint256 newAmount) external onlyOwner {
+        maxTxAmount = newAmount;
+        emit MaxTxAmountUpdated(newAmount);
+    }
+}
